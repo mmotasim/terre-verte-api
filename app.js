@@ -111,7 +111,7 @@ app.post('/locdata',function(req,res){
 
 app.post('/locdataa',function(req,res){
     var data = req.body.data
-    var userlocfile = './locdata/'+req.body.username
+    var userlocfile = './locdata/'+req.body.username+".csv"
     var response = {dataWritten:true}
     fs.writeFile(userlocfile, data ,function(){
         res.send(response)
