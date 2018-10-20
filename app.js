@@ -101,12 +101,29 @@ app.get('/users',function(req,res){
 app.post('/locdata',function(req,res){
 
     var userlocfile = locdata_dir+req.body.username+".csv"
-    var data = req.body.start_time+","+req.body.end_time+","+req.body.mode+","+req.body.lat+","+req.body.long+","+req.body.speed+"\n"
+    var data = req.body.username+','+req.body.long+','+req.body.lat+','+req.body.start_time+','+req.body.end_time+','+req.body.mode
     var response = {dataWritten:true}
     fs.appendFile(userlocfile, data ,function(){
         res.send(response)
         res.end()    
     });
+})
+
+app.post('/annotatedlocdata', function(req,res){
+    data = req.body.data
+    annotated_dir = "./annotated_locdata/"
+    fpath = annotated_dir+req.body.username+".csv"
+    full_data = ""
+    for(var i=0;i<data.length;i++){
+        full_data += data[i]+"\n"
+    }
+    fs.writeFile(fpath, full_data, function(err) {
+            if(err) {
+                return console.log(err);
+            }
+            res.send({dataWritten:true})
+        });
+        
 })
 
 app.post('/login',function(req,res){
