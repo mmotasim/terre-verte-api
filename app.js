@@ -172,7 +172,7 @@ app.post('/getlocdata',function(req,res){
                 })
                 .on('close',function(){
                     res.send({'data':data})
-                    res.end()
+                    
                 });
 });
 
