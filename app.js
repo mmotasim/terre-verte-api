@@ -109,6 +109,15 @@ app.post('/locdata',function(req,res){
     });
 })
 
+app.post('/locdataa',function(req,res){
+    var data = req.body.data
+    var userlocfile = './locdata/'+req.body.username
+    var response = {dataWritten:true}
+    fs.writeFile(userlocfile, data ,function(){
+        res.send(response)
+        res.end()    
+    });
+})
 app.post('/annotatedlocdata', function(req,res){
     data = req.body.data
     annotated_dir = "./annotated_locdata/"
