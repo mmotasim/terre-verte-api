@@ -73,12 +73,88 @@ app.post('/signup', function(req,res){
 app.post('/locdata',function(req,res){
 
     var userlocfile = locdata_dir+req.body.username+".csv"
-    var data = req.body.time+","+req.body.lat+","+req.body.long+","+req.body.speed+"\n"
+    var data = req.body.start_time+","+req.body.end_time+","+req.body.mode+","+req.body.lat+","+req.body.long+","+req.body.speed+"\n"
     var response = {dataWritten:true}
     fs.appendFile(userlocfile, data ,function(){
         res.send(response)
         res.end()    
     });
+})
+
+app.post('/login',function(req,res){
+    var rd = readline.createInterface({
+        
+                input: fs.createReadStream(userfile),
+                output: process.stdout,
+                console: false
+                });
+                response = {userAuthenticated:false}
+                rd.on('line', function(line) {
+                    
+                    words = line.split(",");
+                    if(words.length > 1){
+                        username = words[0]
+                        if(username == req.body.username){
+                            if(words[1]== req.body.password){
+                                response.userAuthenticated = true
+                                res.send(response)
+                                res.end()
+                            }
+                            
+
+                        }
+                    }
+                })
+                .on('close',function(){
+                    if(!response.userAuthenticated){
+                        res.send(response);
+                        res.end();
+                    }
+        
+                });
+})
+app.post('/getlocdata',function(req,res){
+    var userlocfile = locdata_dir+req.body.username+".csv";
+    var rd = readline.createInterface({
+        
+                input: fs.createReadStream(userlocfile),
+                output: process.stdout,
+                console: false
+                });
+                data = []
+                rd.on('line', function(line) {
+                    data.push(line)
+                })
+                .on('close',function(){
+                    res.send({'data':data})
+                    res.end()
+                });
+});
+
+app.post("/getranking",function(req,res){
+
+        var rankingFile = "greenscores.csv"
+        var rd = readline.createInterface({
+        
+                input: fs.createReadStream(rankingFile),
+                output: process.stdout,
+                console: false
+                });
+                data = []
+                rd.on('line', function(line) {
+                    words = line.split(",")
+                    if(words.length>1){
+                        datum = {}
+                        datum['name'] = words[0]
+                        datum['score'] = words[1]
+                        data.push(datum)
+                    }
+                    
+                })
+                .on('close',function(){
+                    res.send({'ranking':data,'user':{'rank':56,'score':22}})
+                    res.end()
+                });
 })
 
 app.get('/', function (req, res) {
