@@ -7,6 +7,8 @@ var userfile = "users.csv"
 var fs = require('fs'),
 readline = require('readline');
 var locdata_dir = "./locdata/"
+var schedule = require('node-schedule')
+
 
 
 app.use(bodyParser.json());
@@ -69,6 +71,32 @@ app.post('/signup', function(req,res){
     signupUser(req,res);
     
 });
+
+app.get('/users',function(req,res){
+    users = []
+    userfile = "users.csv"
+    var rd = readline.createInterface({
+        
+                input: fs.createReadStream(userfile),
+                output: process.stdout,
+                console: false
+                });
+                rd.on('line', function(line) {
+                    
+                    words = line.split(",");
+                    if(words.length > 1){
+                        username = words[0]
+                        users.push(username)
+                    }
+                })
+                .on('close',function(){
+                        res.send({'users':users});
+                        res.end();
+                    
+        
+                });
+
+})
 
 app.post('/locdata',function(req,res){
 
